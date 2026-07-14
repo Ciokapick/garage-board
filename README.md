@@ -8,6 +8,8 @@ GarageBoard turns the daily service-desk workflow into one clear workspace: see 
 
 This is a portfolio project with realistic demonstration data. It does not claim a connection to a real garage, accounting platform or customer database.
 
+**[Open the live dashboard](https://ciokapick.github.io/garage-board/)**
+
 ## What you can do
 
 - Scan live workshop metrics, today's promised handovers and technician capacity.
@@ -81,7 +83,7 @@ npm run build      # production build
 npm audit          # dependency audit
 ```
 
-The repository also contains a GitHub Actions workflow that runs tests, linting, type checking and the production build on every push and pull request.
+The repository also contains GitHub Actions workflows that run tests, linting, type checking and the production build on every push and pull request, then deploy the verified `main` build to GitHub Pages.
 
 ## Implemented scope
 

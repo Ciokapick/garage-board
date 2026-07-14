@@ -1,7 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+
+const history = import.meta.env.VITE_HASH_ROUTING === 'true'
+  ? createWebHashHistory(import.meta.env.BASE_URL)
+  : createWebHistory(import.meta.env.BASE_URL)
 
 export const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history,
   routes: [
     { path: '/', name: 'dashboard', component: () => import('@/views/DashboardView.vue'), meta: { title: 'Overview' } },
     { path: '/work-orders', name: 'work-orders', component: () => import('@/views/WorkOrdersView.vue'), meta: { title: 'Work orders' } },
