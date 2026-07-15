@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Menu, Plus, Search, UsersRound, Wrench, X,
 } from '@lucide/vue'
 
-defineEmits<{ newIntake: [] }>()
+const emit = defineEmits<{ newIntake: [] }>()
 
 const route = useRoute()
 const store = useWorkshopStore()
@@ -29,10 +29,22 @@ function search() {
   if (query) router.push({ path: '/work-orders', query: { q: query } })
 }
 
+function isTyping(target: EventTarget | null) {
+  return target instanceof HTMLElement
+    && (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable)
+}
+
 function onShortcut(event: KeyboardEvent) {
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
     event.preventDefault()
     searchInput.value?.focus()
+    return
+  }
+  // ponytail: DOM check for an open layer beats plumbing modal state up the tree
+  if (event.key.toLowerCase() === 'n' && !event.metaKey && !event.ctrlKey && !event.altKey
+    && !isTyping(event.target) && !document.querySelector('.drawer-layer, .modal-layer')) {
+    event.preventDefault()
+    emit('newIntake')
   }
 }
 
@@ -68,6 +80,11 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onShortcut))
         <div class="avatar avatar--photo">DP</div>
         <div><strong>Denis Paval</strong><span>Service manager</span></div>
         <CircleUserRound :size="18" />
+      </div>
+      <div class="shortcut-hints" aria-label="Keyboard shortcuts">
+        <span><kbd>⌘K</kbd> search</span>
+        <span><kbd>N</kbd> new intake</span>
+        <span><kbd>Esc</kbd> close</span>
       </div>
     </aside>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { Check, ChevronLeft, ChevronRight, ClipboardCheck, X } from '@lucide/vue'
 import { useRouter } from 'vue-router'
 import { useWorkshopStore } from '@/stores/workshop'
@@ -23,8 +23,15 @@ const blankForm = (): NewWorkOrder => ({
 })
 const form = reactive<NewWorkOrder>(blankForm())
 
+function onEscape(event: KeyboardEvent) {
+  if (event.key === 'Escape') emit('close')
+}
+onBeforeUnmount(() => window.removeEventListener('keydown', onEscape))
+
 watch(() => props.open, (open) => {
   if (open) { step.value = 1; submittedId.value = ''; Object.assign(form, blankForm()); Object.keys(errors).forEach((key) => delete errors[key]) }
+  if (open) window.addEventListener('keydown', onEscape)
+  else window.removeEventListener('keydown', onEscape)
 })
 
 const title = computed(() => submittedId.value ? 'Intake created' : step.value === 1 ? 'Customer & vehicle' : 'Service details')

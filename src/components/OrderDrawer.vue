@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, watch } from 'vue'
 import { ArrowLeft, ArrowRight, CalendarDays, CarFront, Phone, Printer, Trash2, UserRound, Wrench, X } from '@lucide/vue'
 import { useWorkshopStore } from '@/stores/workshop'
 import type { WorkOrder } from '@/types/workshop'
@@ -13,6 +13,15 @@ const emit = defineEmits<{ close: [] }>()
 const store = useWorkshopStore()
 const canBack = computed(() => props.order?.status !== 'intake')
 const canForward = computed(() => props.order?.status !== 'ready')
+
+function onEscape(event: KeyboardEvent) {
+  if (event.key === 'Escape') emit('close')
+}
+watch(() => props.order, (open) => {
+  if (open) window.addEventListener('keydown', onEscape)
+  else window.removeEventListener('keydown', onEscape)
+})
+onBeforeUnmount(() => window.removeEventListener('keydown', onEscape))
 
 function printSheet() {
   window.print()
