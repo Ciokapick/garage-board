@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ArrowLeft, ArrowRight, CalendarDays, CarFront, Phone, UserRound, Wrench, X } from '@lucide/vue'
+import { ArrowLeft, ArrowRight, CalendarDays, CarFront, Phone, Printer, UserRound, Wrench, X } from '@lucide/vue'
 import { useWorkshopStore } from '@/stores/workshop'
 import type { WorkOrder } from '@/types/workshop'
 import { formatCurrency, formatDate, relativeDue } from '@/utils/format'
 import PlateBadge from './PlateBadge.vue'
+import PrintSheet from './PrintSheet.vue'
 import StatusBadge from './StatusBadge.vue'
 
 const props = defineProps<{ order: WorkOrder | null }>()
@@ -12,6 +13,10 @@ defineEmits<{ close: [] }>()
 const store = useWorkshopStore()
 const canBack = computed(() => props.order?.status !== 'intake')
 const canForward = computed(() => props.order?.status !== 'ready')
+
+function printSheet() {
+  window.print()
+}
 </script>
 
 <template>
@@ -51,10 +56,12 @@ const canForward = computed(() => props.order?.status !== 'ready')
             </section>
           </div>
           <footer class="drawer-footer">
+            <button class="button button--ghost print-button" @click="printSheet"><Printer :size="17" /> Print work order</button>
             <button class="button button--secondary" :disabled="!canBack" @click="store.moveOrder(order.id, 'back')"><ArrowLeft :size="17" /> Move back</button>
             <button class="button button--primary" :disabled="!canForward" @click="store.moveOrder(order.id, 'forward')">Advance stage <ArrowRight :size="17" /></button>
           </footer>
         </aside>
+        <PrintSheet :order="order" />
       </div>
     </Transition>
   </Teleport>
