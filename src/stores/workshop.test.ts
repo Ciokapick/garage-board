@@ -16,6 +16,7 @@ describe('workshop store', () => {
     expect(store.revenuePipeline).toBe(5730)
     expect(store.averageTicket).toBe(955)
     expect(store.completedCount).toBe(1)
+    expect(store.workshopLoad).toBeCloseTo(5 / 8)
   })
 
   it('creates a validated intake in the first pipeline stage', () => {
@@ -76,6 +77,17 @@ describe('workshop store', () => {
 
     expect(store.orders).toHaveLength(5)
     expect(store.toast).toBeNull()
+  })
+
+  it('recomputes workshop load as cars enter and leave the shop', () => {
+    const store = useWorkshopStore()
+
+    store.deleteOrder('GB-1048')
+    expect(store.workshopLoad).toBeCloseTo(4 / 8)
+
+    const ready = store.orders.find((item) => item.id === 'GB-1044')!
+    store.moveOrder(ready.id, 'back')
+    expect(store.workshopLoad).toBeCloseTo(5 / 8)
   })
 
   it('does not move beyond the end of the pipeline', () => {

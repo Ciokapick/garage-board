@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { ArrowUpRight, Banknote, Download, Timer, Wrench } from '@lucide/vue'
+import LoadGauge from '@/components/LoadGauge.vue'
+import { useWorkshopStore } from '@/stores/workshop'
 import { formatCurrency } from '@/utils/format'
+
+const store = useWorkshopStore()
 const maxBar = 25500
 const months = [{ label: 'Feb', value: 15400 }, { label: 'Mar', value: 18900 }, { label: 'Apr', value: 17100 }, { label: 'May', value: 22400 }, { label: 'Jun', value: 20800 }, { label: 'Jul', value: 24600 }]
 const serviceMix = computed(() => [
@@ -31,6 +35,10 @@ function exportCsv() {
     <section class="page-intro page-intro--compact"><div><h2>Reports</h2><p>A concise view of workshop performance.</p></div><button class="button button--secondary" @click="exportCsv"><Download :size="17" /> Export CSV</button></section>
     <div class="report-kpis"><article><span><Banknote :size="18" /></span><div><small>Revenue this month</small><strong>{{ formatCurrency(24600) }}</strong><p><ArrowUpRight :size="14" /> 8.4% month over month</p></div></article><article><span><Wrench :size="18" /></span><div><small>Jobs completed</small><strong>24</strong><p>4.8 jobs per week</p></div></article><article><span><Timer :size="18" /></span><div><small>Avg. turnaround</small><strong>2.4 days</strong><p>0.3 days faster</p></div></article></div>
     <section class="reports-grid">
+      <article class="panel gauge-panel">
+        <header class="panel-header"><div><h3>Workshop load</h3><p>Bays in use right now</p></div><strong class="mono gauge-percent">{{ Math.round(store.workshopLoad * 100) }}%</strong></header>
+        <LoadGauge />
+      </article>
       <article class="panel revenue-chart"><header class="panel-header"><div><h3>Revenue trend</h3><p>Closed work orders · last 6 months</p></div><strong>{{ formatCurrency(months.reduce((sum, m) => sum + m.value, 0)) }} <small>total</small></strong></header><div class="bar-chart"><div v-for="month in months" :key="month.label" class="bar-column"><span class="bar-value">{{ formatCurrency(month.value) }}</span><i :style="{ height: `${(month.value / maxBar) * 100}%` }" /><small>{{ month.label }}</small></div></div></article>
       <article class="panel service-mix"><header class="panel-header"><div><h3>Service mix</h3><p>By invoiced value</p></div></header><div class="donut-wrap"><div class="donut"><span><strong>24</strong><small>jobs</small></span></div><ul><li v-for="item in serviceMix" :key="item.label"><i :style="{ background: item.color }" /><span>{{ item.label }}</span><strong>{{ item.value }}%</strong></li></ul></div></article>
     </section>

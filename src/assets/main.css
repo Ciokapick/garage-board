@@ -263,6 +263,21 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .donut-wrap li i { width: 7px; height: 7px; border-radius: 50%; }
 .donut-wrap li span { color: var(--muted); }
 .donut-wrap li strong { font-family: var(--mono); }
+.reports-grid .gauge-panel { grid-column: 1 / -1; }
+@media (min-width: 901px) { .reports-grid { grid-template-columns: 1fr 1.5fr 1fr; } .reports-grid .gauge-panel { grid-column: auto; } }
+.gauge-percent { color: var(--accent); font-size: 14px; }
+.gauge { display: block; width: min(100%, 300px); margin: 4px auto 12px; padding: 0 10px; }
+.gauge-track { fill: none; stroke: var(--line); stroke-width: 6; stroke-linecap: round; }
+.gauge-progress { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; opacity: .55; }
+.gauge-redline { fill: none; stroke: var(--red); stroke-width: 6; stroke-linecap: round; }
+.gauge-tick { stroke: var(--muted); stroke-width: 1.5; }
+.gauge-tick--red { stroke: var(--red); }
+.gauge-num { fill: var(--subtle); font-family: var(--mono); font-size: 8px; text-anchor: middle; dominant-baseline: middle; }
+.gauge-needle { transform-origin: 100px 108px; transition: transform .6s cubic-bezier(.3, 1.4, .55, 1); }
+.gauge-needle polygon { fill: var(--accent); }
+.gauge-hub { fill: var(--surface-alt); stroke: var(--accent); stroke-width: 2.5; }
+.gauge-value { fill: var(--ink); font-family: var(--mono); font-size: 15px; font-weight: 600; text-anchor: middle; }
+.gauge-caption { fill: var(--muted); font-size: 7px; text-anchor: middle; }
 .report-table { margin-top: 17px; overflow: hidden; }
 .tech-report-head, .tech-report-row { display: grid; grid-template-columns: 1.5fr repeat(4, 1fr); gap: 12px; padding: 10px 20px; }
 .tech-report-head { color: var(--subtle); background: var(--surface-alt); border-block: 1px solid var(--line); font-size: 8px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }

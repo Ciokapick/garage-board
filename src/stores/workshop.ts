@@ -2,6 +2,9 @@ import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import type { Customer, NewWorkOrder, WorkOrder, WorkOrderStatus } from '@/types/workshop'
 
+// ponytail: bay capacity is a constant until the demo grows shop settings
+export const WORKSHOP_CAPACITY = 8
+
 const STORAGE_KEY = 'garageboard:work-orders:v1'
 const statusOrder: WorkOrderStatus[] = ['intake', 'diagnostics', 'repair', 'quality', 'ready']
 
@@ -110,6 +113,7 @@ export const useWorkshopStore = defineStore('workshop', () => {
   const revenuePipeline = computed(() => orders.value.reduce((sum, order) => sum + order.estimate, 0))
   const averageTicket = computed(() => Math.round(revenuePipeline.value / Math.max(orders.value.length, 1)))
   const completedCount = computed(() => orders.value.filter((order) => order.status === 'ready').length)
+  const workshopLoad = computed(() => activeOrders.value.length / WORKSHOP_CAPACITY)
 
   function addWorkOrder(payload: NewWorkOrder) {
     const highestId = orders.value.reduce((max, item) => Math.max(max, Number(item.id.replace('GB-', ''))), 1048)
@@ -166,5 +170,5 @@ export const useWorkshopStore = defineStore('workshop', () => {
     if (typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(value))
   }, { deep: true })
 
-  return { orders, customers, toast, activeOrders, dueToday, revenuePipeline, averageTicket, completedCount, addWorkOrder, moveOrder, deleteOrder, undo, dismissToast, assignTechnician, resetDemo }
+  return { orders, customers, toast, activeOrders, dueToday, revenuePipeline, averageTicket, completedCount, workshopLoad, addWorkOrder, moveOrder, deleteOrder, undo, dismissToast, assignTechnician, resetDemo }
 })
