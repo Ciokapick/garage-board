@@ -16,9 +16,13 @@ This is a portfolio project with realistic demonstration data. It does not claim
 - Search by work-order ID, customer, vehicle, registration or service.
 - Filter the work-order list by stage and urgent priority.
 - Open a complete job drawer, assign a technician and advance or reverse its stage.
+- Undo destructive status changes and deletions from a five-second safety toast.
 - Create a new intake with a two-step, validated form.
+- Use real keyboard shortcuts: `⌘/Ctrl+K` for search, `N` for intake and `Esc` to close layers.
+- Print a workshop-ready A4 work-order sheet with vehicle, customer, service, estimate and signatures.
 - Keep changes between browser sessions through local storage.
-- Browse customer history and a clearly labelled demo reporting view.
+- Read Romanian-style registration plates and workshop values formatted in RON.
+- Browse customer history and a reporting view with a hand-built SVG workshop-load tachometer.
 - Export the technician report as CSV.
 - Use the complete experience on desktop, tablet and mobile layouts.
 
@@ -30,7 +34,9 @@ The interface is designed around three service-manager questions:
 2. **Where is this vehicle?** Search and stage filters reduce the path to a work order to seconds.
 3. **What is the next action?** The detail drawer keeps assignment, progress and stage controls together.
 
-The visual system deliberately avoids a generic admin-template look: compact typography, restrained colour, high information density and strong status semantics suit a real service desk.
+The visual system deliberately avoids a generic admin-template look: a near-black workshop palette, tachometer amber, mono numerals, Romanian plate badges and dense status semantics suit a real service desk.
+
+The product details are deliberately domain-specific rather than decorative. Monetary values use Romanian formatting and RON, the dashboard speaks in cars, bays and promised handovers, and the printable work order covers a workflow that continues away from the screen.
 
 ## Tech stack
 
@@ -43,6 +49,8 @@ The visual system deliberately avoids a generic admin-template look: compact typ
 | Icons | Lucide Vue | Consistent accessible SVG icon system |
 | Testing | Vitest + jsdom | Fast coverage of workflow state transitions |
 | Tooling | Vite 8 + ESLint | Fast builds and enforceable quality checks |
+
+The load gauge is a hand-built, accessible SVG component rather than a chart-library embed. Its needle and redline are computed from the active work-order state and the workshop's eight-bay capacity.
 
 ## Architecture
 
