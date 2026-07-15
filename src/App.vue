@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import AppShell from '@/components/AppShell.vue'
 import IntakeModal from '@/components/IntakeModal.vue'
+import UndoToast from '@/components/UndoToast.vue'
 
 const intakeOpen = ref(false)
 </script>
@@ -11,4 +12,5 @@ const intakeOpen = ref(false)
     <RouterView @new-intake="intakeOpen = true" />
   </AppShell>
   <IntakeModal :open="intakeOpen" @close="intakeOpen = false" />
+  <UndoToast />
 </template>

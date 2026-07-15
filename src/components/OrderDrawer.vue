@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ArrowLeft, ArrowRight, CalendarDays, CarFront, Phone, Printer, UserRound, Wrench, X } from '@lucide/vue'
+import { ArrowLeft, ArrowRight, CalendarDays, CarFront, Phone, Printer, Trash2, UserRound, Wrench, X } from '@lucide/vue'
 import { useWorkshopStore } from '@/stores/workshop'
 import type { WorkOrder } from '@/types/workshop'
 import { formatCurrency, formatDate, relativeDue } from '@/utils/format'
@@ -9,13 +9,19 @@ import PrintSheet from './PrintSheet.vue'
 import StatusBadge from './StatusBadge.vue'
 
 const props = defineProps<{ order: WorkOrder | null }>()
-defineEmits<{ close: [] }>()
+const emit = defineEmits<{ close: [] }>()
 const store = useWorkshopStore()
 const canBack = computed(() => props.order?.status !== 'intake')
 const canForward = computed(() => props.order?.status !== 'ready')
 
 function printSheet() {
   window.print()
+}
+
+function deleteOrder() {
+  if (!props.order) return
+  store.deleteOrder(props.order.id)
+  emit('close')
 }
 </script>
 
@@ -26,7 +32,10 @@ function printSheet() {
         <aside class="order-drawer" role="dialog" aria-modal="true" :aria-label="`Work order ${order.id}`">
           <header class="drawer-header">
             <div><span class="eyebrow">Work order</span><h2>{{ order.id }}</h2></div>
-            <button class="icon-button" aria-label="Close details" @click="$emit('close')"><X :size="20" /></button>
+            <div class="drawer-header__actions">
+              <button class="icon-button icon-button--danger" aria-label="Delete work order" @click="deleteOrder"><Trash2 :size="18" /></button>
+              <button class="icon-button" aria-label="Close details" @click="$emit('close')"><X :size="20" /></button>
+            </div>
           </header>
           <div class="drawer-body">
             <div class="drawer-status"><StatusBadge :status="order.status" /><span :class="{ urgent: order.priority === 'urgent' }">{{ relativeDue(order.dueAt) }}</span></div>

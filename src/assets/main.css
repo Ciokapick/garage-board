@@ -416,6 +416,18 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .drawer-footer .button { flex: 1; }
 }
 
+.drawer-header__actions { display: flex; gap: 8px; }
+.icon-button--danger:hover { color: var(--red); border-color: rgba(217, 95, 90, .4); }
+
+.toast { position: fixed; bottom: 22px; left: 50%; z-index: 200; display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 16px; background: var(--surface-alt); border: 1px solid var(--line); border-radius: 9px; box-shadow: 0 14px 40px rgba(0, 0, 0, .5); transform: translateX(-50%); font-size: 12px; }
+.toast .mono { color: var(--ink); }
+.toast-undo { padding: 5px 10px; color: var(--accent); background: var(--accent-soft); border: 1px solid rgba(245, 158, 11, .3); border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700; }
+.toast-undo:hover { background: rgba(245, 158, 11, .22); }
+.toast-close { display: grid; place-items: center; padding: 4px; color: var(--subtle); background: transparent; border: 0; cursor: pointer; }
+.toast-close:hover { color: var(--ink); }
+.toast-enter-active, .toast-leave-active { transition: opacity .18s ease, transform .18s ease; }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(8px); }
+
 .print-sheet { display: none; }
 
 @media print {

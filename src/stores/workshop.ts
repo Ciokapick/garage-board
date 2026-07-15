@@ -5,6 +5,15 @@ import type { Customer, NewWorkOrder, WorkOrder, WorkOrderStatus } from '@/types
 const STORAGE_KEY = 'garageboard:work-orders:v1'
 const statusOrder: WorkOrderStatus[] = ['intake', 'diagnostics', 'repair', 'quality', 'ready']
 
+export const statusLabels: Record<WorkOrderStatus, string> = {
+  intake: 'Checked in', diagnostics: 'In diagnosis', repair: 'In repair', quality: 'Final check', ready: 'Ready for pickup',
+}
+
+export interface UndoToast {
+  id: number
+  message: string
+}
+
 const dateFromNow = (days: number, hour = 17) => {
   const date = new Date()
   date.setDate(date.getDate() + days)
@@ -73,6 +82,25 @@ function readOrders() {
 export const useWorkshopStore = defineStore('workshop', () => {
   const orders = ref<WorkOrder[]>(readOrders())
   const customers = ref<Customer[]>(seedCustomers)
+  const toast = ref<UndoToast | null>(null)
+  // ponytail: single-level undo (whole-list snapshot); a history stack only if multi-step undo is ever asked for
+  let undoSnapshot: WorkOrder[] | null = null
+
+  function pushUndo(message: string, snapshot: WorkOrder[]) {
+    undoSnapshot = snapshot
+    toast.value = { id: Date.now(), message }
+  }
+
+  function undo() {
+    if (undoSnapshot) orders.value = undoSnapshot
+    undoSnapshot = null
+    toast.value = null
+  }
+
+  function dismissToast() {
+    undoSnapshot = null
+    toast.value = null
+  }
 
   const activeOrders = computed(() => orders.value.filter((order) => order.status !== 'ready'))
   const dueToday = computed(() => {
@@ -110,8 +138,19 @@ export const useWorkshopStore = defineStore('workshop', () => {
     if (!order) return
     const current = statusOrder.indexOf(order.status)
     const next = direction === 'forward' ? Math.min(current + 1, statusOrder.length - 1) : Math.max(current - 1, 0)
+    if (next === current) return
+    const snapshot = JSON.parse(JSON.stringify(orders.value)) as WorkOrder[]
     order.status = statusOrder[next]
     order.progress = [5, 25, 58, 86, 100][next]
+    pushUndo(`${id} moved to ${statusLabels[order.status]}`, snapshot)
+  }
+
+  function deleteOrder(id: string) {
+    const index = orders.value.findIndex((item) => item.id === id)
+    if (index === -1) return
+    const snapshot = JSON.parse(JSON.stringify(orders.value)) as WorkOrder[]
+    orders.value.splice(index, 1)
+    pushUndo(`${id} deleted`, snapshot)
   }
 
   function assignTechnician(id: string, technician: string | null) {
@@ -127,5 +166,5 @@ export const useWorkshopStore = defineStore('workshop', () => {
     if (typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(value))
   }, { deep: true })
 
-  return { orders, customers, activeOrders, dueToday, revenuePipeline, averageTicket, completedCount, addWorkOrder, moveOrder, assignTechnician, resetDemo }
+  return { orders, customers, toast, activeOrders, dueToday, revenuePipeline, averageTicket, completedCount, addWorkOrder, moveOrder, deleteOrder, undo, dismissToast, assignTechnician, resetDemo }
 })
