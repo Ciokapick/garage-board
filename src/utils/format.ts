@@ -1,5 +1,5 @@
 export const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value)
+  new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON', maximumFractionDigits: 0 }).format(value)
 
 export const formatDate = (value: string, options?: Intl.DateTimeFormatOptions) =>
   new Intl.DateTimeFormat('en-GB', options ?? { day: '2-digit', month: 'short' }).format(new Date(value))
