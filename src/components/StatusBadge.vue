@@ -4,7 +4,7 @@ import type { WorkOrderStatus } from '@/types/workshop'
 
 const props = defineProps<{ status: WorkOrderStatus }>()
 const labels: Record<WorkOrderStatus, string> = {
-  intake: 'Intake', diagnostics: 'Diagnostics', repair: 'In repair', quality: 'Quality check', ready: 'Ready',
+  intake: 'Checked in', diagnostics: 'In diagnosis', repair: 'In repair', quality: 'Final check', ready: 'Ready for pickup',
 }
 const label = computed(() => labels[props.status])
 </script>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useWorkshopStore } from '@/stores/workshop'
 import {
   Bell, ChartNoAxesCombined, ChevronLeft, CircleUserRound, ClipboardList,
   LayoutDashboard, Menu, Plus, Search, UsersRound, Wrench, X,
@@ -9,6 +10,7 @@ import {
 defineEmits<{ newIntake: [] }>()
 
 const route = useRoute()
+const store = useWorkshopStore()
 const router = useRouter()
 const mobileNavOpen = ref(false)
 const globalQuery = ref('')
@@ -53,7 +55,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onShortcut))
         <RouterLink v-for="item in nav" :key="item.to" :to="item.to" class="nav-item" @click="mobileNavOpen = false">
           <component :is="item.icon" :size="19" />
           <span>{{ item.label }}</span>
-          <span v-if="item.to === '/work-orders'" class="nav-count">6</span>
+          <span v-if="item.to === '/work-orders'" class="nav-count">{{ store.activeOrders.length }}</span>
         </RouterLink>
       </nav>
 

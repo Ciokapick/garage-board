@@ -141,6 +141,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .order-cell small { overflow: hidden; margin-top: 3px; color: var(--subtle); font-size: 9px; white-space: nowrap; text-overflow: ellipsis; }
 .order-service small, .order-due small, .wo-due small, .wo-vehicle small { font-family: var(--mono); }
 .vehicle-avatar, .wo-vehicle > i { display: inline-grid; flex: 0 0 auto; place-items: center; width: 34px; height: 34px; color: var(--muted); background: var(--surface-alt); border: 1px solid var(--line); border-radius: 7px; font-weight: 700; font-size: 13px; font-style: normal; }
+.plate { display: inline-flex; overflow: hidden; flex: 0 0 auto; align-items: stretch; height: 16px; background: #f2f4f7; border: 1px solid #8d95a3; border-radius: 3px; line-height: 1; white-space: nowrap; }
+.plate i { display: flex; align-items: center; justify-content: center; width: 12px; color: #fff; background: #17408f; font: 700 5px/1 var(--mono); font-style: normal; letter-spacing: 0; }
+.plate b { display: flex; align-items: center; padding: 0 5px; color: #171b22; font: 600 9px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.plate--large { height: 22px; border-radius: 4px; }
+.plate--large i { width: 16px; font-size: 7px; }
+.plate--large b { padding: 0 8px; font-size: 12px; }
+.order-cell small, .wo-vehicle small { display: inline-flex; align-items: center; gap: 6px; }
 .mini-avatar { display: inline-grid; flex: 0 0 auto; place-items: center; width: 24px; height: 24px; color: var(--accent); background: var(--accent-soft); border-radius: 50%; font-size: 8px; font-style: normal; font-weight: 700; }
 .order-technician { color: var(--muted); }
 .order-due { display: flex; flex-direction: column; align-items: flex-start; }
@@ -163,7 +170,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .schedule-line { position: relative; width: 1px; height: 100%; background: var(--line); }
 .schedule-line::before { position: absolute; top: 5px; left: -3px; width: 7px; height: 7px; background: var(--accent); border: 2px solid rgba(245, 158, 11, .25); border-radius: 50%; content: ''; }
 .schedule-info { display: flex; min-width: 0; flex-direction: column; }
-.schedule-info strong { font-size: 11px; }
+.schedule-info strong { display: flex; align-items: center; gap: 6px; font-size: 11px; }
 .schedule-info small { overflow: hidden; margin-top: 3px; color: var(--muted); font-size: 9px; white-space: nowrap; text-overflow: ellipsis; }
 .schedule-info > span { display: flex; align-items: center; gap: 5px; margin-top: 7px; color: var(--subtle); font-size: 9px; }
 .schedule-info .mini-avatar { width: 18px; height: 18px; font-size: 6px; }

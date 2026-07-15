@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, CalendarDays, CarFront, Phone, UserRound, Wrench
 import { useWorkshopStore } from '@/stores/workshop'
 import type { WorkOrder } from '@/types/workshop'
 import { formatCurrency, formatDate, relativeDue } from '@/utils/format'
+import PlateBadge from './PlateBadge.vue'
 import StatusBadge from './StatusBadge.vue'
 
 const props = defineProps<{ order: WorkOrder | null }>()
@@ -26,7 +27,7 @@ const canForward = computed(() => props.order?.status !== 'ready')
             <div class="drawer-status"><StatusBadge :status="order.status" /><span :class="{ urgent: order.priority === 'urgent' }">{{ relativeDue(order.dueAt) }}</span></div>
             <section class="vehicle-hero">
               <span><CarFront :size="27" /></span>
-              <div><p>{{ order.vehicle.year }} · {{ order.vehicle.registration }}</p><h3>{{ order.vehicle.make }} {{ order.vehicle.model }}</h3></div>
+              <div><p>{{ order.vehicle.year }} <PlateBadge class="plate--large" :plate="order.vehicle.registration" /></p><h3>{{ order.vehicle.make }} {{ order.vehicle.model }}</h3></div>
             </section>
             <section class="detail-section">
               <h4>Service</h4>

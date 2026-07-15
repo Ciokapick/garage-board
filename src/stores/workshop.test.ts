@@ -13,8 +13,8 @@ describe('workshop store', () => {
 
     expect(store.orders).toHaveLength(6)
     expect(store.activeOrders).toHaveLength(5)
-    expect(store.revenuePipeline).toBe(2305)
-    expect(store.averageTicket).toBe(384)
+    expect(store.revenuePipeline).toBe(5730)
+    expect(store.averageTicket).toBe(955)
     expect(store.completedCount).toBe(1)
   })
 

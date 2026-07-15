@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { CalendarClock, ChevronRight, CircleCheckBig, ClipboardList, Euro, Gauge, Plus, TimerReset } from '@lucide/vue'
+import { Banknote, CalendarClock, ChevronRight, CircleCheckBig, ClipboardList, Gauge, Plus, TimerReset } from '@lucide/vue'
 import { useWorkshopStore } from '@/stores/workshop'
 import type { WorkOrder } from '@/types/workshop'
 import { formatCurrency, formatDate, initials } from '@/utils/format'
 import MetricCard from '@/components/MetricCard.vue'
 import OrderDrawer from '@/components/OrderDrawer.vue'
+import PlateBadge from '@/components/PlateBadge.vue'
 import WorkOrderRow from '@/components/WorkOrderRow.vue'
 
 defineEmits<{ newIntake: [] }>()
 const store = useWorkshopStore()
 const selected = ref<WorkOrder | null>(null)
-const greeting = computed(() => new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening')
 const todayLabel = computed(() => new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()))
+const statusLine = computed(() => {
+  const inShop = store.activeOrders.length
+  const parts = [`${inShop} ${inShop === 1 ? 'car' : 'cars'} in the shop`, `${store.dueToday.length} due today`]
+  if (store.completedCount) parts.push(`${store.completedCount} ready for pickup`)
+  return parts.join(' — ')
+})
 const recentOrders = computed(() => store.orders.slice(0, 5))
 const schedule = computed(() => [...store.dueToday].sort((a, b) => a.dueAt.localeCompare(b.dueAt)))
 </script>
@@ -20,15 +26,15 @@ const schedule = computed(() => [...store.dueToday].sort((a, b) => a.dueAt.local
 <template>
   <div class="page dashboard-page">
     <section class="page-intro">
-      <div><span class="date-label">{{ todayLabel }}</span><h2>{{ greeting }}, Denis.</h2><p>Here’s what needs your attention in the workshop today.</p></div>
+      <div><span class="date-label">Shop floor</span><h2>{{ todayLabel }}</h2><p>{{ statusLine }}</p></div>
       <button class="button button--secondary desktop-action" @click="$emit('newIntake')"><Plus :size="18" /> Add work order</button>
     </section>
 
     <section class="metrics-grid">
-      <MetricCard label="Active jobs" :value="store.activeOrders.length" detail="2 due today" trend="up" :icon="ClipboardList" tone="blue" />
-      <MetricCard label="Pipeline value" :value="formatCurrency(store.revenuePipeline)" detail="12% vs last week" trend="up" :icon="Euro" tone="green" />
-      <MetricCard label="Avg. ticket" :value="formatCurrency(store.averageTicket)" detail="Healthy mix" :icon="Gauge" tone="violet" />
-      <MetricCard label="Ready to collect" :value="store.completedCount" detail="Customer notified" :icon="CircleCheckBig" tone="amber" />
+      <MetricCard label="Cars in the shop" :value="store.activeOrders.length" :detail="`${store.dueToday.length} due today`" :icon="ClipboardList" tone="blue" />
+      <MetricCard label="Pipeline value" :value="formatCurrency(store.revenuePipeline)" :detail="`across ${store.orders.length} open orders`" :icon="Banknote" tone="green" />
+      <MetricCard label="Avg. ticket" :value="formatCurrency(store.averageTicket)" detail="per work order" :icon="Gauge" tone="violet" />
+      <MetricCard label="Ready for pickup" :value="store.completedCount" detail="waiting on the customer" :icon="CircleCheckBig" tone="amber" />
     </section>
 
     <section class="dashboard-grid">
@@ -44,7 +50,7 @@ const schedule = computed(() => [...store.dueToday].sort((a, b) => a.dueAt.local
           <button v-for="order in schedule" :key="order.id" class="schedule-item" @click="selected = order">
             <span class="schedule-time">{{ formatDate(order.dueAt, { hour: '2-digit', minute: '2-digit' }) }}</span>
             <span class="schedule-line" />
-            <span class="schedule-info"><strong>{{ order.vehicle.make }} {{ order.vehicle.model }}</strong><small>{{ order.service }}</small><span><i class="mini-avatar">{{ initials(order.technician ?? 'NA') }}</i>{{ order.technician ?? 'Unassigned' }}</span></span>
+            <span class="schedule-info"><strong>{{ order.vehicle.make }} {{ order.vehicle.model }} <PlateBadge :plate="order.vehicle.registration" /></strong><small>{{ order.service }}</small><span><i class="mini-avatar">{{ initials(order.technician ?? 'NA') }}</i>{{ order.technician ?? 'Unassigned' }}</span></span>
           </button>
         </div>
         <div v-else class="empty-compact"><TimerReset :size="24" /><strong>No handovers today</strong><span>The schedule is clear.</span></div>
