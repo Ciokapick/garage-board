@@ -13,9 +13,10 @@ describe('workshop store', () => {
 
     expect(store.orders).toHaveLength(6)
     expect(store.activeOrders).toHaveLength(5)
-    expect(store.revenuePipeline).toBe(2305)
-    expect(store.averageTicket).toBe(384)
+    expect(store.revenuePipeline).toBe(5730)
+    expect(store.averageTicket).toBe(955)
     expect(store.completedCount).toBe(1)
+    expect(store.workshopLoad).toBeCloseTo(5 / 8)
   })
 
   it('creates a validated intake in the first pipeline stage', () => {
@@ -41,6 +42,52 @@ describe('workshop store', () => {
     expect(order.status).toBe('repair')
     expect(order.progress).toBe(58)
     expect(order.technician).toBe('Alex')
+  })
+
+  it('undoes a status change from the toast snapshot', () => {
+    const store = useWorkshopStore()
+    const order = store.orders.find((item) => item.id === 'GB-1047')!
+
+    store.moveOrder(order.id, 'forward')
+    expect(store.toast?.message).toBe('GB-1047 moved to In repair')
+
+    store.undo()
+    expect(store.orders.find((item) => item.id === 'GB-1047')!.status).toBe('diagnostics')
+    expect(store.toast).toBeNull()
+  })
+
+  it('undoes a deletion and restores the order in place', () => {
+    const store = useWorkshopStore()
+
+    store.deleteOrder('GB-1046')
+    expect(store.orders).toHaveLength(5)
+    expect(store.toast?.message).toBe('GB-1046 deleted')
+
+    store.undo()
+    expect(store.orders).toHaveLength(6)
+    expect(store.orders[2].id).toBe('GB-1046')
+  })
+
+  it('dismissing the toast drops the undo snapshot', () => {
+    const store = useWorkshopStore()
+
+    store.deleteOrder('GB-1044')
+    store.dismissToast()
+    store.undo()
+
+    expect(store.orders).toHaveLength(5)
+    expect(store.toast).toBeNull()
+  })
+
+  it('recomputes workshop load as cars enter and leave the shop', () => {
+    const store = useWorkshopStore()
+
+    store.deleteOrder('GB-1048')
+    expect(store.workshopLoad).toBeCloseTo(4 / 8)
+
+    const ready = store.orders.find((item) => item.id === 'GB-1044')!
+    store.moveOrder(ready.id, 'back')
+    expect(store.workshopLoad).toBeCloseTo(5 / 8)
   })
 
   it('does not move beyond the end of the pipeline', () => {

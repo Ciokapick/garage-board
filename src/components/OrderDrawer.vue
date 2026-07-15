@@ -1,16 +1,37 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { ArrowLeft, ArrowRight, CalendarDays, CarFront, Phone, UserRound, Wrench, X } from '@lucide/vue'
+import { computed, onBeforeUnmount, watch } from 'vue'
+import { ArrowLeft, ArrowRight, CalendarDays, CarFront, Phone, Printer, Trash2, UserRound, Wrench, X } from '@lucide/vue'
 import { useWorkshopStore } from '@/stores/workshop'
 import type { WorkOrder } from '@/types/workshop'
 import { formatCurrency, formatDate, relativeDue } from '@/utils/format'
+import PlateBadge from './PlateBadge.vue'
+import PrintSheet from './PrintSheet.vue'
 import StatusBadge from './StatusBadge.vue'
 
 const props = defineProps<{ order: WorkOrder | null }>()
-defineEmits<{ close: [] }>()
+const emit = defineEmits<{ close: [] }>()
 const store = useWorkshopStore()
 const canBack = computed(() => props.order?.status !== 'intake')
 const canForward = computed(() => props.order?.status !== 'ready')
+
+function onEscape(event: KeyboardEvent) {
+  if (event.key === 'Escape') emit('close')
+}
+watch(() => props.order, (open) => {
+  if (open) window.addEventListener('keydown', onEscape)
+  else window.removeEventListener('keydown', onEscape)
+})
+onBeforeUnmount(() => window.removeEventListener('keydown', onEscape))
+
+function printSheet() {
+  window.print()
+}
+
+function deleteOrder() {
+  if (!props.order) return
+  store.deleteOrder(props.order.id)
+  emit('close')
+}
 </script>
 
 <template>
@@ -20,13 +41,16 @@ const canForward = computed(() => props.order?.status !== 'ready')
         <aside class="order-drawer" role="dialog" aria-modal="true" :aria-label="`Work order ${order.id}`">
           <header class="drawer-header">
             <div><span class="eyebrow">Work order</span><h2>{{ order.id }}</h2></div>
-            <button class="icon-button" aria-label="Close details" @click="$emit('close')"><X :size="20" /></button>
+            <div class="drawer-header__actions">
+              <button class="icon-button icon-button--danger" aria-label="Delete work order" @click="deleteOrder"><Trash2 :size="18" /></button>
+              <button class="icon-button" aria-label="Close details" @click="$emit('close')"><X :size="20" /></button>
+            </div>
           </header>
           <div class="drawer-body">
             <div class="drawer-status"><StatusBadge :status="order.status" /><span :class="{ urgent: order.priority === 'urgent' }">{{ relativeDue(order.dueAt) }}</span></div>
             <section class="vehicle-hero">
               <span><CarFront :size="27" /></span>
-              <div><p>{{ order.vehicle.year }} · {{ order.vehicle.registration }}</p><h3>{{ order.vehicle.make }} {{ order.vehicle.model }}</h3></div>
+              <div><p>{{ order.vehicle.year }} <PlateBadge class="plate--large" :plate="order.vehicle.registration" /></p><h3>{{ order.vehicle.make }} {{ order.vehicle.model }}</h3></div>
             </section>
             <section class="detail-section">
               <h4>Service</h4>
@@ -50,10 +74,12 @@ const canForward = computed(() => props.order?.status !== 'ready')
             </section>
           </div>
           <footer class="drawer-footer">
+            <button class="button button--ghost print-button" @click="printSheet"><Printer :size="17" /> Print work order</button>
             <button class="button button--secondary" :disabled="!canBack" @click="store.moveOrder(order.id, 'back')"><ArrowLeft :size="17" /> Move back</button>
             <button class="button button--primary" :disabled="!canForward" @click="store.moveOrder(order.id, 'forward')">Advance stage <ArrowRight :size="17" /></button>
           </footer>
         </aside>
+        <PrintSheet :order="order" />
       </div>
     </Transition>
   </Teleport>

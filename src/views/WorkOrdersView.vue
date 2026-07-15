@@ -5,6 +5,7 @@ import { useWorkshopStore } from '@/stores/workshop'
 import { useRoute } from 'vue-router'
 import type { WorkOrder, WorkOrderStatus } from '@/types/workshop'
 import OrderDrawer from '@/components/OrderDrawer.vue'
+import PlateBadge from '@/components/PlateBadge.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 import { formatCurrency, initials, relativeDue } from '@/utils/format'
 
@@ -38,7 +39,7 @@ const countFor = (value: 'all' | WorkOrderStatus) => value === 'all' ? store.ord
       <div class="work-orders-head"><span>Work order</span><span>Customer</span><span>Status</span><span>Technician</span><span>Progress</span><span>Due</span><span /></div>
       <div v-if="filtered.length" class="work-orders-list">
         <button v-for="order in filtered" :key="order.id" class="work-order-line" @click="selected = order">
-          <span class="wo-vehicle"><i>{{ order.vehicle.make.slice(0, 1) }}</i><span><strong>{{ order.vehicle.make }} {{ order.vehicle.model }}</strong><small>{{ order.id }} · {{ order.vehicle.registration }}</small></span></span>
+          <span class="wo-vehicle"><i>{{ order.vehicle.make.slice(0, 1) }}</i><span><strong>{{ order.vehicle.make }} {{ order.vehicle.model }}</strong><small class="mono">{{ order.id }} <PlateBadge :plate="order.vehicle.registration" /></small></span></span>
           <span class="wo-customer"><strong>{{ order.customerName }}</strong><small>{{ order.service }}</small></span>
           <StatusBadge :status="order.status" />
           <span class="order-technician"><i v-if="order.technician" class="mini-avatar">{{ initials(order.technician) }}</i>{{ order.technician ?? 'Unassigned' }}</span>
