@@ -16,7 +16,7 @@ const point = (f: number, r: number) => {
 const arc = (from: number, to: number, r: number) => {
   const p1 = point(from, r)
   const p2 = point(to, r)
-  return `M ${p1.x} ${p1.y} A ${r} ${r} 0 ${to - from > 0.5 ? 1 : 0} 1 ${p2.x} ${p2.y}`
+  return `M ${p1.x} ${p1.y} A ${r} ${r} 0 ${(to - from) * SWEEP > 180 ? 1 : 0} 1 ${p2.x} ${p2.y}`
 }
 
 const redlineFrom = (WORKSHOP_CAPACITY - 2) / WORKSHOP_CAPACITY
@@ -32,7 +32,7 @@ const inShop = computed(() => store.activeOrders.length)
 
 <template>
   <svg
-    class="gauge" viewBox="0 0 200 150" role="img"
+    class="gauge" viewBox="0 0 200 160" role="img"
     :aria-label="`Workshop load: ${inShop} of ${WORKSHOP_CAPACITY} bays in use`"
   >
     <path class="gauge-track" :d="arc(0, 1, R)" />
@@ -46,7 +46,7 @@ const inShop = computed(() => store.activeOrders.length)
       <text class="gauge-num" :x="tick.label.x" :y="tick.label.y">{{ tick.value }}</text>
     </g>
     <g class="gauge-needle" :style="{ transform: `rotate(${needleAngle}deg)` }">
-      <polygon points="97,108 100,42 103,108" />
+      <polygon points="97,108 100,52 103,108" />
     </g>
     <circle class="gauge-hub" :cx="CX" :cy="CY" r="7" />
     <text class="gauge-value" :x="CX" :y="CY + 26">{{ inShop }} / {{ WORKSHOP_CAPACITY }}</text>
