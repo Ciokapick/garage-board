@@ -77,8 +77,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onShortcut))
         <ChevronLeft :size="17" class="shop-card__chevron" />
       </div>
       <div class="sidebar-user">
-        <div class="avatar avatar--photo">DP</div>
-        <div><strong>Denis Paval</strong><span>Service manager</span></div>
+        <div class="avatar avatar--photo">CD</div>
+        <div><strong>Cristina Dobre</strong><span>Service manager</span></div>
         <CircleUserRound :size="18" />
       </div>
       <div class="shortcut-hints" aria-label="Keyboard shortcuts">

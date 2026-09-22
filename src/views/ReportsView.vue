@@ -9,8 +9,8 @@ const store = useWorkshopStore()
 const maxBar = 25500
 const months = [{ label: 'Feb', value: 15400 }, { label: 'Mar', value: 18900 }, { label: 'Apr', value: 17100 }, { label: 'May', value: 22400 }, { label: 'Jun', value: 20800 }, { label: 'Jul', value: 24600 }]
 const serviceMix = computed(() => [
-  { label: 'Maintenance', value: 42, color: '#6d9ee8' }, { label: 'Mechanical repair', value: 31, color: '#3fb27f' },
-  { label: 'Diagnostics', value: 17, color: '#9d8cd8' }, { label: 'Other', value: 10, color: '#f59e0b' },
+  { label: 'Maintenance', value: 42, color: '#1c1b18' }, { label: 'Mechanical repair', value: 31, color: '#b4531b' },
+  { label: 'Diagnostics', value: 17, color: '#2f5fa8' }, { label: 'Other', value: 10, color: '#f2c21b' },
 ])
 
 function exportCsv() {
